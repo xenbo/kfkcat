@@ -207,6 +207,7 @@ static void produce(void *buf, size_t len,
  * Produce contents of file as a single message.
  * Returns the file length on success, else -1.
  */
+ //dongbo test1
 static ssize_t produce_file(const char *path) {
     int fd;
     void *ptr;
@@ -322,8 +323,24 @@ static void producer_run(FILE *fp, char **paths, int pathcnt) {
             KC_INFO(1, "Failed to produce from %i/%i files\n",
                     pathcnt - good, pathcnt);
 
-    } else {
-        /* Read messages from input, delimited by conf.delim */
+    } else {  // //dongbo test2
+        /* Read messages from input, delimited by conf.delim
+
+         * #include < stdio.h >
+        ssize_t getline（char ** lineptr ，size_t * n ，FILE * stream ）;
+        ssize_t getdelim（char ** lineptr ，size_t * n ，int  delim ，FILE * stream ）;
+        glibc的功能测试宏要求（请参阅feature_test_macros（7））：
+        getline（），getdelim（）：
+
+        getline（）从流中读取整行，并将包含文本的缓冲区地址存储到* lineptr中。如果找到缓冲区，则该缓冲区以null终止，并包含换行符。
+        如果* lineptr为NULL，则getline（）将分配用于存储行的缓冲区，该缓冲区应由用户程序释放。（在这种情况下，* n中的值将被忽略。）
+        另外，在调用getline（）之前，* lineptr可以包含一个指向分配了malloc（3）的缓冲区的指针* n个字节。如果缓冲区的大小不足以容纳该行，
+         则getline（）使用realloc（3）调整其大小，并根据需要更新* lineptr和* n。
+        无论哪种情况，在成功调用后，* lineptr和* n都会更新以分别反映缓冲区地址和分配的大小。
+        getdelim（）类似于getline（），但可以将除newline之外的行定界符指定为定界符参数。
+        与 getline（）一样，如果在到达文件末尾之前输入中不存在分隔符，则不会添加分隔符。
+         *
+         * */
         while (conf.run &&
                (len = getdelim(&sbuf, &size, conf.delim, fp)) != -1) {
             int msgflags = 0;
